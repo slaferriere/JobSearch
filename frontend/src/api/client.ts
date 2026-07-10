@@ -34,10 +34,19 @@ export function fetchCurrentResume(): Promise<ResumeProfile> {
   return request<ResumeProfile>(`/api/resume`)
 }
 
-export async function uploadResume(file: File): Promise<ResumeProfile> {
+export function fetchAllResumes(): Promise<ResumeProfile[]> {
+  return request<ResumeProfile[]>(`/api/resume/all`)
+}
+
+export async function uploadResume(args: { file: File; label?: string }): Promise<ResumeProfile> {
   const form = new FormData()
-  form.append("file", file)
+  form.append("file", args.file)
+  if (args.label) form.append("label", args.label)
   return request<ResumeProfile>(`/api/resume`, { method: "POST", body: form })
+}
+
+export function activateResume(id: number): Promise<ResumeProfile> {
+  return request<ResumeProfile>(`/api/resume/${id}/activate`, { method: "POST" })
 }
 
 export function triggerIngestion(sources?: string[]): Promise<IngestionRun[]> {

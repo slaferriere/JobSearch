@@ -1,6 +1,6 @@
 # Job Search
 
-A personal job-search app: pulls listings from Greenhouse, Lever, and USAJobs, scores them against your resume with Claude, and lets you filter/browse in a local web UI. See `.env.example` for required config.
+A personal job-search app: pulls listings from Greenhouse, Lever, Workday, and USAJobs, scores them against your resume with Claude, and lets you filter/browse in a local web UI. Supports multiple resumes (e.g. one per role track) with a switcher to pick which one is active. See `.env.example` for required config.
 
 ## Setup
 
@@ -44,10 +44,16 @@ For recurring ingestion without keeping the app open, schedule this script with 
 Company lists live in `backend/app/connectors/registry.py`:
 - Greenhouse: find a company's board token from `boards.greenhouse.io/{token}`
 - Lever: find a company's slug from `jobs.lever.co/{slug}`
-- USAJobs requires a free API key from `developer.usajobs.gov` — federal/govt-adjacent roles, useful if you need clearance-relevant listings (LinkedIn and ClearanceJobs have no public API, so they aren't sourced here).
+- Workday: covers large enterprises (defense contractors, big banks, big tech) that run their careers site on Workday's public JSON API. A company's tenant/host/site aren't guessable from its name — verify a new entry live before adding it (see the comment at the top of `registry.py`). `WORKDAY_SEARCH_KEYWORDS` controls which roles get pulled from each of these (often huge) job boards — update it when your target roles change.
+- USAJobs requires a free API key from `developer.usajobs.gov` — federal/govt-adjacent roles, useful if you need clearance-relevant listings.
+- LinkedIn, ClearanceJobs, and several large companies with no public careers API (Lockheed Martin, L3Harris, BAE Systems, Goldman Sachs, Charles Schwab, JPMorgan, Google, Microsoft, Amazon, Apple, Meta, Oracle, IBM) are intentionally not sourced — see `registry.py`.
+
+## Managing resumes
+
+Upload a resume with an optional label (e.g. "Architect") to distinguish it from others. Only one resume is "active" at a time — that's the one job listings are scored/filtered against. Switch which one is active from the dropdown in the Resume card (once more than one resume is uploaded); switching triggers scoring for any job not yet scored against the newly active resume, reusing cached scores from that resume's previous stint as active.
 
 ## Known limits (MVP)
 
-- No LinkedIn/ClearanceJobs sourcing (no public API for either — see above).
 - No automated "apply for me" yet — each listing links to the original posting. A future phase adds Claude-drafted cover letters and a Playwright-based form-prefill (never auto-submits) for Greenhouse/Lever hosted apply pages.
 - Matching runs synchronously per ingestion; fine at current volume, would move to the Batch API at larger scale.
+- Workday ingestion is slower than Greenhouse/Lever (a second HTTP request per matched posting to fetch the full description) and caps at 60 results per company per run.

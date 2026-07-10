@@ -3,11 +3,12 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.db import engine
+from app.db import engine, run_migrations
 from app.models import Base
 from app.routers import ingest, jobs, resume
 
 Base.metadata.create_all(bind=engine)
+run_migrations()
 
 app = FastAPI(title="Job Search")
 

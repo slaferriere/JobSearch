@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import settings
@@ -15,3 +15,12 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def run_migrations() -> None:
+    """create_all only adds missing tables, not columns on tables that already
+    exist — this backfills columns added after a database was first created."""
+    with engine.begin() as conn:
+        cols = {row[1] for row in conn.execute(text("PRAGMA table_info(resume_profile)"))}
+        if cols and "label" not in cols:
+            conn.execute(text("ALTER TABLE resume_profile ADD COLUMN label VARCHAR"))

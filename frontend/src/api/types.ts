@@ -30,6 +30,8 @@ export interface ResumeProfile {
   id: number
   uploaded_at: string
   original_filename: string | null
+  label: string | null
+  is_current: boolean
   parsed: {
     name: string
     email: string | null

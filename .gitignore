@@ -1,5 +1,6 @@
 .env
 data/jobsearch.db
+data/jobsearch.db-journal
 data/resumes/*
 !data/resumes/.gitkeep
 backend/.venv/

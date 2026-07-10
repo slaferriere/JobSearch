@@ -6,8 +6,15 @@ from app.connectors.base import Connector, NormalizedJob
 from app.connectors.dedupe import content_hash
 from app.connectors.greenhouse import GreenhouseConnector
 from app.connectors.lever import LeverConnector
-from app.connectors.registry import GREENHOUSE_COMPANIES, LEVER_COMPANIES, USAJOBS_KEYWORDS
+from app.connectors.registry import (
+    GREENHOUSE_COMPANIES,
+    LEVER_COMPANIES,
+    USAJOBS_KEYWORDS,
+    WORKDAY_COMPANIES,
+    WORKDAY_SEARCH_KEYWORDS,
+)
 from app.connectors.usajobs import UsaJobsConnector
+from app.connectors.workday import WorkdayConnector
 from app.models import IngestionRun, Job, utcnow
 
 
@@ -15,6 +22,7 @@ def build_connectors() -> dict[str, Connector]:
     connectors: dict[str, Connector] = {
         "greenhouse": GreenhouseConnector(GREENHOUSE_COMPANIES),
         "lever": LeverConnector(LEVER_COMPANIES),
+        "workday": WorkdayConnector(WORKDAY_COMPANIES, WORKDAY_SEARCH_KEYWORDS),
     }
     if settings.usajobs_api_key and settings.usajobs_user_agent:
         connectors["usajobs"] = UsaJobsConnector(

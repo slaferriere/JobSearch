@@ -53,6 +53,7 @@ class ResumeProfile(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     uploaded_at: Mapped[str] = mapped_column(String, default=utcnow)
     original_filename: Mapped[str | None] = mapped_column(String, nullable=True)
+    label: Mapped[str | None] = mapped_column(String, nullable=True)
     file_path: Mapped[str] = mapped_column(String)
     raw_text: Mapped[str] = mapped_column(Text)
     parsed_json: Mapped[str] = mapped_column(Text)

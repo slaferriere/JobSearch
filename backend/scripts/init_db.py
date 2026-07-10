@@ -5,9 +5,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.db import engine
+from app.db import engine, run_migrations
 from app.models import Base
 
 if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
+    run_migrations()
     print("Database schema ready.")

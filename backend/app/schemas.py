@@ -33,6 +33,8 @@ class ResumeProfileOut(BaseModel):
     id: int
     uploaded_at: str
     original_filename: str | None
+    label: str | None
+    is_current: bool
     parsed: dict
 
     model_config = {"from_attributes": True}
